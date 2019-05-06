@@ -84,7 +84,7 @@ Vue.component('add-mutil-modal-component',{
       submit: function (e) {
           var v = this;
           $.x_request({
-              url: '/library/api/' + v.id + '/add_batch/',
+              url: API_HOST + v.id + '/add_batch/',
               type: "POST",
               data: {
                   form_list: JSON.stringify(v.form_list)

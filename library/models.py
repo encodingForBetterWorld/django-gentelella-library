@@ -66,7 +66,7 @@ class ArticleTag(FakeDeleteModal):
 class Article(FakeDeleteModal):
     title = models.CharField(max_length=100, verbose_name="书名", null=True)
     subtitle = models.CharField(max_length=100, verbose_name="副标题", null=True)
-    description = RichTextField(max_length=5000, verbose_name="简介", null=True)
+    description = RichTextField(verbose_name="简介", null=True)
     cover = models.FileField(upload_to="covers", verbose_name="封面图片", blank=True)
     authors = models.ManyToManyField(Author, verbose_name="作者", null=True)
     tags = models.ManyToManyField(ArticleTag, verbose_name="分类", null=True)
@@ -104,7 +104,7 @@ class ArticlePage(models.Model):
         verbose_name = "书页"
         verbose_name_plural = "书页"
     index = models.IntegerField(verbose_name="页码", null=True)
-    content = RichTextField(max_length=5000, verbose_name="内容", null=True)
+    content = RichTextField(verbose_name="内容", null=True)
     article = models.ForeignKey(Article, verbose_name="书籍", on_delete=models.SET_NULL, null=True)
     chapter = models.ForeignKey(ArticleChapter, verbose_name="所属章节", on_delete=models.SET_NULL, null=True, blank=True)
 

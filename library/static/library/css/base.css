@@ -129,6 +129,7 @@ li.active>a>span:before {
     width: 32em;
     height: 32em;
     flex-shrink: 0;
+    padding: 2px 15px;
 }
 .content-detail-img > img{
     width: 100%;

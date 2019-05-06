@@ -5,8 +5,24 @@
 {% block stylesheets %}
     {{ block.super }}
 {% endblock stylesheets %}
+{% block content %}
+<h1 style="text-align:center"><span style="font-family:comic sans ms,cursive">书库管理系统说明</span></h1>
 
-
+<ol>
+    <li>
+        <p><span style="font-size:16px"><span style="font-family:comic sans ms,cursive">Django提供后台支持，Gentelella UI渲染静态页面</span></span>
+        </p>
+    </li>
+    <li>
+        <p><span style="font-size:16px"><span style="font-family:comic sans ms,cursive">包含异步页面（django-restframework + vueJs）</span></span>
+        </p>
+    </li>
+    <li>
+        <p><span style="font-size:16px"><span style="font-family:comic sans ms,cursive">使用本系统可以对一本电子书进行完整的管理（包括目录、章节及书页内容等）</span></span>
+        </p>
+    </li>
+</ol>
+{% endblock content %}
 {% block javascripts %}
     {{ block.super }}
 {% endblock javascripts %}

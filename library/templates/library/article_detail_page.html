@@ -343,7 +343,7 @@
                      content: '即将删除书页' + v.page.data.index,
                      confirm: function (e) {
                          $.x_request({
-                             url: '/library/api/page/' + v.page.data.id + '/delete',
+                             url: API_HOST + 'page/' + v.page.data.id + '/delete',
                              type: "POST"
                          }).then(function (res) {
                              v.refreshTable('page', v.page.data.index - 1)
@@ -368,7 +368,7 @@
          submitForm: function(i) {
              var v = this, form = this.$data[i].form
              $.x_request({
-                 url: '/library/api/' + i + '/'+form.id+'/modify',
+                 url: API_HOST + i + '/'+form.id+'/modify',
                  type: "POST",
                  data: form
              }).then(function (res) {
@@ -385,7 +385,7 @@
              v.page.form['article'] = {{ data.id }}
              $.x_request({
                  type: "POST",
-                 url: '/library/api/page/'+ (v.page.form.id ? v.page.form.id+'/modify':'add/'),
+                 url: API_HOST + 'page/'+ (v.page.form.id ? v.page.form.id+'/modify':'add/'),
                  data: v.page.form
              }).then(function () {
                  v.refreshTable('page', v.page.form.index)
@@ -436,7 +436,7 @@
                  content: '即将删除'+t+data.index,
                  confirm: function (e) {
                      $.x_request({
-                         url: '/library/api/' + i + '/' + data.id + '/delete',
+                         url: API_HOST + i + '/' + data.id + '/delete',
                          type: "POST",
                      }).then(function (res) {
                          v.refreshTable(i)

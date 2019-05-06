@@ -5,7 +5,7 @@
 ## 功能展示
 
 <p>
-  <img alt="管理书籍" src="./screenshots/edit-article.gif" width="33%" />
+  <img alt="管理书籍" src="./screenshots/edit-article.gif" width="600px"  height:="400px"/>
 </p>
 
 ## 项目模板

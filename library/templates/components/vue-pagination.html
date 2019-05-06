@@ -1,0 +1,81 @@
+<template id="pagination-component">
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="dataTables_info" role="status" aria-live="polite">
+            {% verbatim %}
+              显示 {{ page.count }} 条记录中的 第 {{ start_index }} 至 {{ end_index }} 条
+            {% endverbatim %}
+            </div>
+        </div>
+        <div class="col-sm-7">
+            <div class="dataTables_paginate paging_simple_numbers">
+                {% verbatim %}
+                <ul class="pagination">
+                    <li :class="'paginate_button previous' + (page.number > 1 ? '': ' disabled')">
+                        <a @click="page.number > 1 ? navigateTo(1):''" href="javascript:;">首页</a>
+                    </li>
+                    <li :class="'paginate_button previous' + (page.number > 1 ? '': ' disabled')">
+                        <a @click="page.number > 1 ? navigateTo(page.number - 1):''" href="javascript:;">
+                            <i class="fa fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <select class="form-control" @change="navigateTo" v-if="indexes && indexes.length>0">
+                            <option :value="idx" v-for="idx in indexes" :selected="page.number===idx">
+                                第{{ idx }}页
+                            </option>
+                        </select>
+                    </li>
+                    <li :class="'paginate_button next' + (page.number < page.num_pages ? '': ' disabled')">
+                        <a @click="page.number < page.num_pages ? navigateTo(page.number + 1):''" href="javascript:;">
+                            <i class="fa fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li :class="'paginate_button next' + (page.number < page.num_pages ? '': ' disabled')">
+                        <a @click="page.number < page.num_pages ? navigateTo(page.num_pages):''" href="javascript:;">尾页</a></li>
+                </ul>
+                {% endverbatim %}
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+Vue.component('pagination-component',{
+    template: '#pagination-component',
+    props: ['page'],
+    data: function(){
+      return {
+          indexes: [],
+          start_index: 0,
+          end_index: 0
+      }
+    },
+    watch: {
+       'page': {
+           handler: function(n, o) {
+               this.setPage()
+           },
+           immediate: true
+       }
+     },
+    methods: {
+        setPage: function () {
+            this.start_index = (this.page.count > 0) ? (this.page.per_page * (this.page.number-1) + 1): 0
+            this.end_index = (this.page.number === this.page.num_pages) ? this.page.count: this.page.number * this.page.per_page
+            var i = 1, indexes = [];
+            while (i <= this.page.num_pages) {
+                indexes.push(i)
+                i++
+            }
+            this.indexes = indexes
+        },
+        navigateTo: function(idx) {
+            if (idx < 1 || idx > this.page.num_pages) return
+            if(typeof idx != 'number'){
+                idx = idx.target.value
+            }
+            this.$emit("navigate-2-page", idx)
+        }
+    }
+})
+</script>

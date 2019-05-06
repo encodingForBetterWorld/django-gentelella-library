@@ -1,0 +1,101 @@
+{% load staticfiles %}
+<template id="add-mutil-modal-component">
+    <div {% verbatim %}
+            :id="'add-mutil-modal-'+id"
+         {% endverbatim %}
+        class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"{% block modal_prop %}{% endblock %}>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header modal-header-default">
+                    <button type="button" class="close close-default" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                    <h4 class="modal-title">{% verbatim %}添加{{ title }}{% endverbatim %}</h4>
+                </div>
+                <form class="navbar-form">
+                    <div class="modal-body">
+                        {% verbatim %}
+                        <table class="table table-hover table-bordered dataTable" v-if="fields">
+                            <thead>
+                                <tr>
+                                    <th  v-for="field in fields">
+                                        {{ field.verbose_name }}
+                                    </th>
+                                    <th>
+                                        相关操作
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(idx, form) in form_list">
+                                    <td v-for="field in fields">
+                                        <select v-if="field.type=='select'" v-model="form_list[idx][field.field]" class="form-control">
+                                            <option value="">
+                                                ---------
+                                            </option>
+                                            <option v-for="r in range[field.field]" :value="r.key" :selected="r.key==form_list[idx][field.field]">
+                                                {{ r.value }}
+                                            </option>
+                                        </select>
+                                        <input v-else :type="field.type" class="form-control" v-model="form_list[idx][field.field]">
+                                    </td>
+                                    <td><button class="btn btn-danger btn-remove" @click="remove(idx)">撤销</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {% endverbatim %}
+                    </div>
+                    <div class="modal-footer">
+                        {% verbatim %}
+                        <button type="button" style="margin-right: 3rem" class="btn btn-primary" @click="add">新增{{ title }}</button>
+                        <button type="button" @click="submit" class="btn btn-primary">确认</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                        {% endverbatim %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+Vue.component('add-mutil-modal-component',{
+  template: '#add-mutil-modal-component',
+  props: ['id', 'title','fields','range', 'const_fields'],
+  data: function() {
+      return {
+          form_list: []
+      }
+  },
+  ready: function() {
+      this.add()
+  },
+  methods: {
+      remove: function (idx) {
+          this.form_list.splice(idx, 1)
+      },
+      add: function (e) {
+          var form = {}
+          for (var k in this.const_fields) {
+              form[k] = this.const_fields[k]
+          }
+          this.fields.forEach(function(item){
+              form[item.field] = ''
+          })
+          this.form_list.push(form)
+      },
+      submit: function (e) {
+          var v = this;
+          $.x_request({
+              url: '/library/api/' + v.id + '/add_batch/',
+              type: "POST",
+              data: {
+                  form_list: JSON.stringify(v.form_list)
+              }
+          }).then(function (res){
+              v.$emit('after-submit', v.id, res)
+              $('#add-mutil-modal-'+v.id).modal('hide')
+              v.form_list = []
+              v.add()
+          })
+      }
+  }
+})
+</script>

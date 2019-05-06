@@ -1,0 +1,23 @@
+{% load staticfiles %}
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" {% block modal_prop %}{% endblock %}>
+    <div class="modal-dialog">
+        <div {% block modal_content_prop %}class="modal-content" {% endblock modal_content_prop %}>
+            <div {% block modal_header_prop %}class="modal-header" {% endblock modal_header_prop %}>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                <h4 class="modal-title" id="myModalLabel">{% block modal_title_h4 %}{% endblock %}</h4>
+            </div>
+            <div class="modal-body">
+                {% block modal-body %}{% endblock %}
+            </div>
+            <div class="modal-footer">
+                {% block modal-footer %}
+                <button type="button" class="btn btn-primary">确认</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% block modal-tip-script %}{% endblock %}
+<script src="{% static 'library/js/plugins/modal/modal-dialog.js'%}"></script>
+<link REL="stylesheet" HREF="{% static 'library/css/plugins/modal.css' %}"/>

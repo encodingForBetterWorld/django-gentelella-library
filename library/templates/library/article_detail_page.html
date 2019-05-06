@@ -1,0 +1,454 @@
+{% extends "library/base/base_detail_page.html" %}
+{% load static %}
+{% block body_header %}
+    {% include 'components/modal-vue-addmutil-form.html' %}
+    {% include 'components/modal-vue-form.html' %}
+    {% include 'components/vue-table.html' %}
+    {% include 'components/vue-pagination.html' %}
+    {% csrf_token %}
+{% endblock body_header %}
+{% block container_header %}
+    <add-mutil-modal-component title='目录' id='catalogue' :fields="catalogue.fields" :range="catalogue.range"
+                               :const_fields="catalogue.const_fields" @after-submit="refreshTable">
+    </add-mutil-modal-component>
+    <form-modal-component prefix='修改' title='目录' id='catalogue' :fields="catalogue.fields" :range="catalogue.range"
+                          :form="catalogue.form" @submit-form="submitForm" @reset-form="resetForm">
+    </form-modal-component>
+    <add-mutil-modal-component title='章节' id='chapter' :fields="chapter.fields" :const_fields="chapter.const_fields"
+                               @after-submit="refreshTable">
+    </add-mutil-modal-component>
+    <form-modal-component prefix='修改' title='章节' id='chapter' :fields="chapter.fields" :form="chapter.form"
+                          @submit-form="submitForm" @reset-form="resetForm">
+    </form-modal-component>
+    {% include 'components/modal-vue-form-articlepage.html' %}
+{% endblock container_header %}
+{%  block detail_operate_panel %}
+{% if data.id %}
+<li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+        <i class="fa fa-wrench"></i>
+    </a>
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a href="modify">修改文章</a>
+        </li>
+    </ul>
+</li>
+{% endif %}
+{% endblock detail_operate_panel %}
+{% block detail_table_content_before %}
+<div class="content-detail-img">
+<img src="{{ MEDIA_URL }}{{ data.cover }}">
+</div>
+{% endblock detail_table_content_before %}
+{% block detail_table_content %}
+{{ block.super }}
+ <li class="row row-description">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        {{ data.description|safe }}
+    </div>
+ </li>
+{% endblock detail_table_content %}
+{% block extra_content %}
+<div class="col-md-2 col-sm-3 col-xs-12" id="catalogue_content">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>目录</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a @click="addMutil('catalogue')" href="javascript:;">新增目录</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="close-link"><i class="fa fa-close"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        {% verbatim %}
+        <div class="x_content">
+             <table-component id='catalogue' title='目录' :datas="catalogue.datas" :fields="catalogue.list_fields"
+                              @modify="rowModify"
+                              @row-delete="rowDelete">
+            </table-component>
+        </div>
+        {% endverbatim %}
+    </div>
+</div>
+
+<div class="col-md-2 col-sm-3 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>章节</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a @click="addMutil('chapter')" href="javascript:;">新增章节</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="close-link"><i class="fa fa-close"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <table-component id='chapter' title='章节' :datas="chapter.datas" :fields="chapter.list_fields"
+                             @modify="rowModify"
+                             @row-delete="rowDelete">
+            </table-component>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-8 col-sm-6 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            {% verbatim %}
+            <h2>{{ (page.data && page.data.chapter)?'第'+page.data.chapter.index+'章:'+page.data.chapter.title:'书页' }}</h2>
+            {% endverbatim %}
+            <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <i class="fa fa-wrench"></i>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="javascript:;" @click="modifyArticlePage('add')">新增书页</a>
+                            <a href="javascript:;" @click="modifyArticlePage('modify')" v-if="page.data&&page.data.id">修改书页</a>
+                            <a href="javascript:;" @click="modifyArticlePage('delete')" v-if="page.data&&page.data.id">删除书页</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="close-link"><i class="fa fa-close"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="page-content-wrapper dataTables_wrapper form-inline dt-bootstrap no-footer"
+                 v-if="page.data&&page.data.id">
+                {% verbatim %}
+                <div class="row">
+                    <div class="page-content-header">
+                        <i class="fa fa-tag fa-fw"></i><span>总第{{ page.data.index }}页</span>
+                    </div>
+                    <div class="page-content-html" v-html="page.data.content">
+                    </div>
+                </div>
+                <pagination-component :page="page.page" @navigate-2-page="navigateToPage"></pagination-component>
+                {% endverbatim %}
+            </div>
+            <div class="bs-example" data-example-id="simple-jumbotron" v-else>
+                <div class="jumbotron">
+                    <p>暂无书页信息</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock extra_content %}
+{% block stylesheets %}
+{{ block.super }}
+    <link href="{% static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css' %}" rel="stylesheet">
+    <link REL="stylesheet" HREF="{% static 'library/css/plugins/modal.css' %}"/>
+    <style>
+    @media screen and (max-width: 990px) {
+        .x_content {
+            flex-flow: row wrap;
+        }
+    }
+    .list-unstyled {
+        width: 100%!important;
+    }
+    .x_content{
+        display: flex;
+        justify-content: stretch;
+        align-items: flex-start;
+    }
+    </style>
+{% endblock stylesheets %}
+{% block javascripts %}
+    {{ block.super }}
+<script>
+ new Vue({
+     el: '#app',
+     data: function(){
+         return {
+             catalogue: {
+                 datas: [],
+                 form: {},
+                 const_fields: {
+                   'article': {{ data.id }}
+                 },
+                 fields:[
+                     {
+                         verbose_name: '页码',
+                         field: 'index',
+                         type: 'number'
+                     },
+                     {
+                         verbose_name: '页码描述',
+                         field: 'index_description',
+                         type: 'text'
+                     },
+                     {
+                         verbose_name: '标题',
+                         field: 'title',
+                         type: 'text'
+                     },
+                     {
+                         verbose_name: '简介',
+                         field: 'description',
+                         type: 'text'
+                     },
+                     {
+                         verbose_name: '书页',
+                         field: 'page',
+                         type: 'select'
+                     }
+                 ],
+                 list_fields: [
+                     {
+                         verbose_name: '页码',
+                         field: 'index_description'
+                     },
+                     {
+                         verbose_name: '标题',
+                         field: 'title'
+                     },
+                 ],
+                 range: {
+                     page: []
+                 }
+             },
+             chapter: {
+                 datas: [],
+                 form: {},
+                 const_fields: {
+                   'article': {{ data.id }}
+                 },
+                 fields:[
+                     {
+                         verbose_name: '章节编号',
+                         field: 'index',
+                         type: 'number'
+                     },
+                     {
+                         verbose_name: '标题',
+                         field: 'title',
+                         type: 'text'
+                     },
+                     {
+                         verbose_name: '简介',
+                         field: 'description',
+                         type: 'text'
+                     }
+                 ],
+                 list_fields: [
+                     {
+                         verbose_name: '章节编号',
+                         field: 'index'
+                     },
+                     {
+                         verbose_name: '标题',
+                         field: 'title'
+                     }
+                 ]
+             },
+             page: {
+                 prefix: '',
+                 data:{},
+                 form: {
+                     content:""
+                 },
+                 fields:[
+                     {
+                         verbose_name: '页码',
+                         field: 'index',
+                         type: 'number'
+                     },
+                     {
+                         verbose_name: '所属章节',
+                         field: 'chapter',
+                         type: 'select'
+                     }
+                 ],
+                 page:{},
+                 range:{
+                    chapter: []
+                 }
+             }
+         }
+     },
+     watch: {
+         'page.form.content': {
+             handler: function (n, o) {
+                 $('#cke_id_content iframe').contents().find('body').html(n);
+             },
+             immediate: false
+         },
+         'chapter.datas': {
+             handler: function (n, o) {
+                 var nlist = []
+                 n.forEach(function (item) {
+                     nlist.push({
+                         key: item.id,
+                         value: '第' + item.index + '章'
+                     })
+                 })
+                 this.page.range['chapter'] = nlist
+             },
+             immediate: true
+         }
+     },
+     ready: function () {
+         var fields = this.catalogue.fields
+         this.catalogue.list_fields = [fields[1], fields[2]]
+         fields = this.chapter.fields
+         this.chapter.list_fields = [fields[0], fields[1]]
+         this.refreshTable('catalogue')
+         this.refreshTable('chapter')
+         this.refreshTable('page')
+     },
+     methods:{
+         addMutil: function (i) {
+             $('#add-mutil-modal-'+i).modal('show')
+         },
+         modifyArticlePage: function(type){
+             var v = this
+             if (type == 'delete') {
+                 return $.show_modal_confirm({
+                     title: '删除书页',
+                     content: '即将删除书页' + v.page.data.index,
+                     confirm: function (e) {
+                         $.x_request({
+                             url: '/library/api/page/' + v.page.data.id + '/delete',
+                             type: "POST"
+                         }).then(function (res) {
+                             v.refreshTable('page', v.page.data.index - 1)
+                         })
+                     }
+                 })
+             }
+             if (type == 'add'){
+                 v.page.prefix = '新增'
+                 v.page.form = {
+                     content: ""
+                 }
+             }else if (type == 'modify') {
+                 v.page.prefix = '修改'
+                 v.page.form = Object.assign({}, v.page.data)
+                 if (v.page.data.chapter){
+                     v.page.form.chapter = v.page.data.chapter.id
+                 }
+             }
+             $('#form-modal-articlepage').modal('show')
+         },
+         submitForm: function(i) {
+             var v = this, form = this.$data[i].form
+             $.x_request({
+                 url: '/library/api/' + i + '/'+form.id+'/modify',
+                 type: "POST",
+                 data: form
+             }).then(function (res) {
+                 $('#form-modal-'+i).modal('hide')
+                 v.refreshTable(i)
+             })
+         },
+         resetForm: function(i) {
+             this.$data[i].form = {}
+         },
+         submitPageForm: function() {
+             var v = this
+             v.page.form['content'] = $('#cke_id_content iframe').contents().find('body').html()
+             v.page.form['article'] = {{ data.id }}
+             $.x_request({
+                 type: "POST",
+                 url: '/library/api/page/'+ (v.page.form.id ? v.page.form.id+'/modify':'add/'),
+                 data: v.page.form
+             }).then(function () {
+                 v.refreshTable('page', v.page.form.index)
+                 v.page.form = {
+                     content: ""
+                 }
+                 $('#form-modal-articlepage').modal('hide')
+             })
+         },
+         resetPageForm: function() {
+             $('#cke_id_content iframe').contents().find('body').html("")
+             this.page.form = {
+                 content: ""
+             }
+         },
+         refreshTable: function (i, p){
+             var v = this;
+             $.x_request({
+                 type: "GET",
+                 url: "{% url 'api' 'article' data.id %}" + (i+'s'),
+                 data: {
+                     page: p>0?p:1
+                 }
+             }).then(function (res) {
+                 if (i== 'page'){
+                     v.page.data = res.data.data
+                     v.catalogue.range['page'] = []
+                     res.data.range.forEach(function (r) {
+                         v.catalogue.range['page'].push({
+                             'key': r[0],
+                             'value': '第'+r[1]+'页'
+                         })
+                     })
+                 }else{
+                     v.$data[i].datas = res.data
+                 }
+                 v.$data[i].page = res.page
+             })
+         },
+         rowModify: function (i, idx) {
+             this.$data[i].form = this.$data[i].datas[idx]
+             $('#form-modal-'+i).modal('show')
+         },
+         rowDelete: function (i, idx) {
+             var v=this, data = this.$data[i].datas[idx], t=(i=='chapter'&&'章节')||(i=='catalogue'&&'目录')||''
+             $.show_modal_confirm({
+                 title: '删除'+t,
+                 content: '即将删除'+t+data.index,
+                 confirm: function (e) {
+                     $.x_request({
+                         url: '/library/api/' + i + '/' + data.id + '/delete',
+                         type: "POST",
+                     }).then(function (res) {
+                         v.refreshTable(i)
+                     })
+                 }
+             })
+         },
+         navigateToPage: function (idx) {
+             this.refreshTable('page', idx)
+         }
+     }
+ })
+
+  </script>
+{% endblock javascripts %}

@@ -1,0 +1,113 @@
+{% extends "library/base/base_site.html" %}
+{% load static %}
+{% load custom_tags %}
+{% load custom_filters %}
+{% block title %} {{ title|default:"文档" }}列表 {% endblock title %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link href="{% static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="x_title">
+    <h2>{{ title|default:"文档" }}列表</h2>
+    <ul class="nav navbar-right panel_toolbox">
+        <li>
+            <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+        </li>
+        {% block operates %}
+        {% if operates and operates|length > 0 %}
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+            <ul class="dropdown-menu" role="menu">
+        {% for operate in operates %}
+                <li>
+                    {{ operate|gen_operate_item:request }}
+                </li>
+        {% endfor %}
+            </ul>
+        </li>
+        {% endif %}
+        {% endblock operates %}
+        <li>
+            <a class="close-link">
+                <i class="fa fa-close"></i>
+            </a>
+        </li>
+    </ul>
+    <div class="clearfix"></div>
+</div>
+<div class="x_content">
+  <div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+      {% if not no_search %}
+      <form class="row">
+          {% block search_form_content %}
+          <div class="col-sm-6 pull-right">
+              <div class="dataTables_filter">
+                  <label>搜索:
+                      <input type="search" name="search" class="form-control input-sm" value="{{ request.GET.search }}" placeholder="输入要搜索的内容" aria-controls="datatable">
+                      {% if list_search_const %}
+                      {% for k, v in list_search_const.items %}
+                      <input type="hidden" name="{{k}}" value="{{ data|format_data_str:v }}">
+                      {% endfor %}
+                      {% endif %}
+                  </label>
+              </div>
+          </div>
+          {% endblock search_form_content %}
+      </form>
+      {% endif %}
+      {% if not datas or datas|length == 0%}
+      {% include 'components/comp_empty_table.html' %}
+      {% else %}
+      <div class="row">
+      {% block table_content %}
+          <table class="table table-hover table-bordered dataTable">
+              <thead>
+                {% sortable_table_heads request.META.QUERY_STRING datas list_entities row_operates no_sort %}
+              </thead>
+              <tbody>
+          {% block table_body %}
+          {% for data in datas %}
+          <tr {% block tr_attr %}{% endblock tr_attr %}>
+              {% for entity in list_entities %}
+              <td>
+                  {{ data|gen_tbody_item:entity }}
+              </td>
+              {% endfor %}
+              {% if row_operates and row_operates|length > 0 %}
+                  <td>
+                  {% for operate in row_operates %}
+                      {{ operate|gen_row_operate_item:data }}
+                      {% if not forloop.last %}
+                      <a><span>/</span></a>
+                      {% endif %}
+                  {% endfor %}
+                  </td>
+              {% endif %}
+          </tr>
+          {% endfor %}
+          {% endblock table_body %}
+              </tbody>
+          </table>
+      {% endblock table_content %}
+      </div>
+      {% if not no_page %}
+      {% pagination request.META.QUERY_STRING datas %}
+      {% endif %}
+      {% endif %}
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+    {{ block.super }}
+
+{% endblock javascripts %}

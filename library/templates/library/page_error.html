@@ -1,0 +1,30 @@
+{% extends "library/base/base_site.html" %}
+{% load static %}
+{% block main_content %}
+<div class="page-title">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+       <h3> <img src="{% static 'library/images/fail.png' %}" alt="error" style="margin-right: .5em"><span>操作失败</span></h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_content">
+                <div class="bs-example" data-example-id="simple-jumbotron">
+                    <div class="jumbotron">
+                        <h1>{{error_desc}}</h1>
+                        {% for msg in error_msg %}
+                            {% if msg|length == 3 %}
+                            <p>{{ msg.0 }}-{{ msg.1 }}-{{ msg.2 }}</p>
+                            {% else %}
+                            <p>{{ msg }}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}

@@ -1,0 +1,13 @@
+<div class="title_right">
+    <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+        <form method="post" action="{% url 'search'  group.id  %}">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" name="search_info" class="form-control" placeholder="请输入您要搜索的信息">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="submit">搜索</button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>

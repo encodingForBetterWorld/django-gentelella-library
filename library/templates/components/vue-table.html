@@ -1,0 +1,47 @@
+{% verbatim %}
+<template id="table-template">
+     <div class="bs-example" data-example-id="simple-jumbotron" v-if="datas && datas.length == 0">
+        <div class="jumbotron">
+            <p>暂无{{title}}信息</p>
+        </div>
+    </div>
+    <table class="table table-hover table-bordered dataTable" v-else>
+        <thead>
+            <tr>
+                <th v-for="field in fields">
+                    {{field.verbose_name}}
+                </th>
+                <th>
+                    相关操作
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(idx, data) in datas">
+                <td v-for="field in fields">
+                    {{ data[field.field] }}
+                </td>
+                <td>
+                    <a href="javascript:;" @click="modify(idx)"><span>修改</span></a>
+                    <a><span>/</span></a>
+                    <a href="javascript:;" @click="rowDelete(idx)"><span>删除</span></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</template>
+{% endverbatim %}
+<script>
+Vue.component('table-component',{
+  template: '#table-template',
+  props: ['id', 'title','fields','datas'],
+  methods: {
+      modify: function(idx){
+          return this.$emit('modify', this.id, idx)
+      },
+      rowDelete: function (idx) {
+          return this.$emit('row-delete', this.id, idx)
+      }
+  }
+})
+</script>

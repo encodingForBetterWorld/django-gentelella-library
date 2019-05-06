@@ -1,0 +1,55 @@
+{% extends "library/base/base_site.html" %}
+{% load static %}
+{% block main_content %}
+<div class="page-title">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+       <h3> <img src="{% static 'library/images/success.png' %}" alt="success" style="margin-right: .5em"><span>操作成功</span></h3>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_content">
+                <div class="bs-example" data-example-id="simple-jumbotron">
+                    <div class="jumbotron">
+                        <h1>
+                            {{info}}
+                        </h1>
+                        <p>
+                            详情请查看相关日志
+                        </p>
+                        <p>浏览器将在<span id="second">5</span>秒后自动返回
+                        <a
+                            {% if back_step %}
+                            href="javascript:window.history.go({{back_step}});"
+                            {% else %}
+                            href="javascript:window.history.back();"
+                            {% endif %}
+                        >（点击立即返回）</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}
+{% block reload_window_javascript %}
+<script>
+    sessionStorage.setItem('flag_operator_success', 1)
+    var second=5;
+    var s=setInterval(function() {
+        if(!second) {
+            clearInterval(s)
+            {% if back_step %}
+            window.history.go({{back_step}});
+            {% else %}
+            window.history.back();
+            {% endif %}
+        }
+        document.getElementById("second").innerHTML=second;
+        second--;
+    },1000);
+</script>
+{% endblock reload_window_javascript %}

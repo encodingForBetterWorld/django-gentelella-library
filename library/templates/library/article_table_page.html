@@ -1,0 +1,24 @@
+{% extends 'library/base/base_table.html' %}
+{% block table_content %}
+    {% for data in datas %}
+    <div class="col-md-55">
+        <div class="thumbnail">
+            <div class="image view view-first">
+                <img style="width: 100%; display: block;" src="{{ MEDIA_URL }}{{ data.cover }}" alt="image"/>
+                <div class="mask">
+                    <p>{{ data.title }}</p>
+                    <div class="tools tools-bottom">
+                        <a href="{% url 'base_path' 'library' 'article' data.id %}"><i class="fa fa-file"></i></a>
+                        <a href="{% url 'base_path' 'library' 'article' data.id 'modify' %}"><i class="fa fa-pencil"></i></a>
+                        <a href="javascript:;" onclick=$.show_modal_confirm("{% url 'base_path' 'library' 'article' data.id 'delete' %}")><i class="fa fa-times"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="caption">
+                <p>{{ data.subtitle }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock table_content %}
+                

@@ -1,0 +1,96 @@
+{% load static %}
+{% load custom_filters %}
+<div class="left_col scroll-view">
+    <div class="navbar nav_title" style="border: 0;">
+        <a href="{% url 'index' %}" class="site_title"><i class="fa fa-book"></i> <span>书库管理系统</span></a>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <!-- menu profile quick info -->
+    <div class="profile clearfix">
+        <div class="profile_pic">
+            <a href="#">
+                <img src="{% static 'library/images/pic_logo.jpg' %}" alt="{{ request.session.operator_admin }}" class="img-circle profile_img">
+            </a>
+        </div>
+        <div class="profile_info">
+            <a href="#">
+                <span>
+                {% now "H" as hour %}
+                    {% with hour|add:"0" as hour %}
+                    {% if 0 <= hour and hour < 7 %}
+                    夜深了
+                    {% elif 7 <= hour and hour < 10 %}
+                    早上好
+                    {% elif 10 <= hour and hour < 15 %}
+                    中午好
+                    {% elif 15 <= hour and hour < 19 %}
+                    下午好
+                    {% else %}
+                    晚上好
+                    {% endif %}
+                    {% endwith %}
+                </span>
+                <h2>书库管理员</h2>
+            </a>
+        </div>
+    </div>
+    <!-- /menu profile quick info -->
+
+    <br/>
+
+    <!-- sidebar menu -->
+    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+        <div class="menu_section">
+            <h3>书库管理</h3>
+            <ul class="nav side-menu">
+              <li><a><i class="fa fa-bookmark fa-fw"></i> 书籍 <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{% url 'base_path' 'library' 'article' 'search' %}">书籍查询</a></li>
+                    <li class="child-side-menu-md">
+                        <a>书籍管理<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                            <li class="sub_menu">
+                                <a href="{% url 'base_path' 'library' 'article' 'list' %}">内容管理</a>
+                                <a href="{% url 'base_path' 'library' 'article_tag' 'list' %}">分类管理</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="child-side-menu-sm">
+                        <a href="{% url 'base_path' 'library' 'article' 'list' %}">书籍内容管理</a>
+                    </li>
+                    <li class="child-side-menu-sm">
+                        <a href="{% url 'base_path' 'library' 'article_tag' 'list' %}">书籍分类管理</a>
+                    </li>
+                </ul>
+              </li>
+              <li><a><i class="fa fa-user fa-fw"></i> 作者 <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{% url 'base_path' 'library' 'author' 'list' %}">作者管理</a></li>
+                </ul>
+              </li>
+              <li><a><i class="fa fa-university fa-fw"></i> 出版社 <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{% url 'base_path' 'library' 'publisher' 'list' %}">出版社管理</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+    </div>
+    <!-- /sidebar menu -->
+
+    <!-- /menu footer buttons -->
+    <div class="sidebar-footer hidden-small">
+        <a data-toggle="tooltip" data-placement="top" title="设置">
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+        </a>
+        <a data-toggle="tooltip" data-placement="top" title="全屏" id="full_screen_toggle">
+            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+        </a>
+        <a data-toggle="tooltip" data-placement="top" title="注销" href="#">
+            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+        </a>
+    </div>
+    <!-- /menu footer buttons -->
+</div>

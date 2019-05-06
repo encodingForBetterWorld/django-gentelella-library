@@ -1,0 +1,28 @@
+{% extends 'components/blocks/modal-form-base.html' %}
+{% load bootstrap %}
+{% block modal_prop %}id="form-modal-articlepage"{% endblock modal_prop %}
+{% block modal_title_h4 %}{% verbatim %}{{ page.prefix }}{% endverbatim %}书页{% endblock %}
+{% block modal-form-body %}
+{% verbatim %}
+<div class="form-group" v-for="field in page.fields">
+    <label class="control-label col-sm-2 col-lg-2 " :for="'id_'+field.field">{{ field.verbose_name }}</label>
+    <div class=" col-sm-10 col-lg-10 ">
+        <select v-if="field.type=='select'" v-model="page.form[field.field]" class="form-control">
+            <option value="">
+                ---------
+            </option>
+            <option v-for="r in page.range[field.field]" :value="r.key" :selected="r.key==page.form[field.field]">
+                {{ r.value }}
+            </option>
+        </select>
+        <input v-else :type="field.type" v-model="page.form[field.field]" :id="'id_'+field.field" class="form-control">
+    </div>
+</div>
+{% endverbatim %}
+{{ pageForm|bootstrap_horizontal }}
+{% endblock modal-form-body %}
+{% block modal-form-footer %}
+    <button type="button" style="margin-right: 3rem" class="btn btn-primary" @click="resetPageForm">重置</button>
+    <button type="button" class="btn btn-primary" @click="submitPageForm">确认</button>
+    <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+{% endblock modal-form-footer %}

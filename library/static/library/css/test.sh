@@ -1,0 +1,1 @@
+for file in `ls all-databases-2017-10-29-0*.sql`; do tar --force-local -czvf "${file}.tar.gz" "${file}" && rm "${file}"; done

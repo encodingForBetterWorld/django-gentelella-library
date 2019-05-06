@@ -1,0 +1,62 @@
+<template id="{% block templateid %}form-modal-component{% endblock templateid %}">
+    <div {% verbatim %}
+            :id="'form-modal-'+id"
+         {% endverbatim %}
+        class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"{% block modal_prop %}{% endblock %}>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header modal-header-default">
+                    <button type="button" class="close close-default" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                    <h4 class="modal-title">{% verbatim %}{{ prefix }}{{ title }}{% endverbatim %}</h4>
+                </div>
+                <form class="form-horizontal form-label-left">
+                    <div class="modal-body">
+                        {% verbatim %}
+                       <div class="form-group" v-for="field in fields">
+                            <label class="control-label col-sm-2 col-lg-2 " :for="'id_'+field.field">{{ field.verbose_name }}</label>
+                            <div class=" col-sm-10 col-lg-10 ">
+                                <select v-if="field.type=='select'" v-model="form[field.field]" class="form-control">
+                                    <option value="">
+                                        ---------
+                                    </option>
+                                    <option v-for="r in range[field.field]" :value="r.key" :selected="r.key==form[field.field]">
+                                        {{ r.value }}
+                                    </option>
+                                </select>
+                                <input v-else :type="field.type" v-model="form[field.field]" :id="'id_'+field.field" class="form-control">
+                            </div>
+                        </div>
+                        {% endverbatim %}
+                        {% block extra_form_content %}
+                        {% endblock extra_form_content %}
+                    </div>
+                    <div class="modal-footer">
+                        {% verbatim %}
+                        <button type="button" style="margin-right: 3rem" class="btn btn-primary" @click="reset">重置</button>
+                        <button type="button" class="btn btn-primary" @click="submit">确认</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                        {% endverbatim %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+{% block vue_script %}
+<script>
+    Vue.component('form-modal-component',{
+        template: '#form-modal-component',
+        props: ['id', 'prefix', 'title','fields','range', 'form'],
+        ready: function() {
+        },
+        methods: {
+            submit: function (e) {
+                this.$emit('submit-form', this.id)
+            },
+            reset: function (e) {
+                this.$emit('reset-form', this.id)
+            }
+        }
+    })
+</script>
+{% endblock vue_script %}

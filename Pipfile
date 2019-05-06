@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+
+[packages]
+django = "==1.11.20"
+django-ckeditor = "==5.0.3"
+PyMySQL = "==0.7.11"
+django-bootstrap-form = "==3.2.1"
+djangorestframework = "==3.3.3"
+
+[requires]
+python_version = "2.7"

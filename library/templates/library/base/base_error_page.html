@@ -1,0 +1,23 @@
+{% extends "library/base/base_site.html" %}
+{% load static %}
+{% block body %}
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-12">
+          <div class="col-middle">
+            <div class="text-center text-center">
+              <h1 class="error-number">{% block status_msg %}{% endblock status_msg %}</h1>
+              <h2>{% block err_msg %}{% endblock err_msg %}</h2>
+              <div class="mid_center">
+                <h3>
+                  {% with request.path|slice:"12" as app_label %}
+                      <a href="{% url 'index' %}">去首页</a>
+                  {% endwith %}
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock body %}

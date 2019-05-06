@@ -1,0 +1,74 @@
+/*自定义模态框样式*/
+.modal-body{
+    max-height: 500px;
+    overflow-y: auto;
+}
+.modal-content-error{
+	border-color: #ebccd1
+}
+.modal-content-error,.tr-content-error{
+	background-color: #fff;
+}
+.modal-content-default{
+	border-color: #5A738E
+}
+.modal-content-default,.tr-content-default{
+	background-color: #e1f5fe;
+}
+.modal-content-warn{
+	border-color: #d58512;
+}
+.modal-content-warn,.tr-content-warn{
+	background-color: #fff;
+}
+.modal-header{
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	color: #fff
+}
+.modal-header-error{
+	background-color: #a94442;
+}
+.modal-header-default{
+	background-color: #2A3F54;
+}
+.modal-header-warn{
+	background-color: #f0ad4e;
+}
+.modal-section-header > label
+{
+	background-color: #73879C;
+	color: #ffffff;
+}
+
+.modal-section-header > label:hover
+{
+	background-color: #73879C;
+}
+.modal-section-header > label{
+    font-size: 11px;
+	padding: 10px;
+	line-height: 1.8rem;
+	width:100%;
+
+	border-radius: 3px 3px 3px 3px;
+	-moz-border-radius: 3px 3px 3px 3px;
+	-webkit-border-radius: 3px 3px 3px 3px;
+
+
+	transition: background-color 0.25s;
+	-moz-transition: background-color 0.25s;
+	-webkit-transition: background-color 0.25s;
+	-o-transition: background-color 0.25s;
+
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+}
+.close-default {
+	color: #bebebe!important;
+}
+.close-default:hover {
+	color: #989898!important;
+}

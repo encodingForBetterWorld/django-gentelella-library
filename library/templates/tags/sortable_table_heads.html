@@ -1,0 +1,24 @@
+{% load staticfiles %}
+<tr>
+{% for order_head in order_heads %}
+    {% if order_head.sortable %}
+    <th
+        {% if order_head.show_mode == 0 %}
+        class="sorting_desc"
+        {% elif order_head.show_mode == 1 %}
+        class="sorting_asc"
+        {% else %}
+        class="sorting"
+        {% endif %}
+    onclick="javascript:location.href='{{ order_head.href_url }}'">
+        <a>
+            <span>{{order_head.head_name}}</span>
+        </a>
+    </th>
+    {% else %}
+    <th>
+        {{order_head.head_name}}
+    </th>
+    {% endif %}
+{% endfor %}
+</tr>

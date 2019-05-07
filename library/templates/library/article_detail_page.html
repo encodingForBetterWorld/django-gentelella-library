@@ -335,6 +335,7 @@
                  v.page.prefix = '新增'
                  v.page.form = {
                      content: "",
+                     index: v.page.data.index + 1,
                      chapter: v.curr_chapter_id || ''
                  }
              }else if (type == 'modify') {
@@ -369,7 +370,7 @@
                  url: API_HOST + 'page/'+ (v.page.form.id ? v.page.form.id+'/modify':'add/'),
                  data: v.page.form
              }).then(function () {
-                 v.refreshTable('page', {page: v.page.form.index})
+                 v.refreshTable('page', {page: v.page.page && (v.page.page.number+(v.page.form.id?0:1)) || 1 })
                  v.page.form = {
                      content: ""
                  }

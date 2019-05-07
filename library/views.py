@@ -604,7 +604,13 @@ class APICategory(object):
 
     def list_article_pages(self, request, article_id):
         datas = ArticlePage.objects.filter(article_id=article_id).values_list('id', 'index')
-        dpage = paginate(request, datas, 1)
+        chapter_id = request.GET.get('chapter_id')
+        if chapter_id:
+            dpage = paginate(request,
+                             ArticlePage.objects.filter(article_id=article_id, chapter_id=chapter_id).values_list('id'),
+                             1)
+        else:
+            dpage = paginate(request, datas, 1)
         data = {}
         if len(dpage.object_list) > 0:
             try:

@@ -25,6 +25,8 @@
                     <a href="javascript:;" @click="modify(idx)"><span>修改</span></a>
                     <a><span>/</span></a>
                     <a href="javascript:;" @click="rowDelete(idx)"><span>删除</span></a>
+                    <a><span>/</span></a>
+                    <a href="javascript:;" @click="rowPageList(idx)"><span>查看书页</span></a>
                 </td>
             </tr>
         </tbody>
@@ -41,6 +43,9 @@ Vue.component('table-component',{
       },
       rowDelete: function (idx) {
           return this.$emit('row-delete', this.id, idx)
+      },
+      rowPageList: function (idx) {
+          return this.$emit('row-page-list', this.id, idx)
       }
   }
 })

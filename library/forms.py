@@ -42,14 +42,27 @@ class ArticleForm(forms.ModelForm):
                                                              required=False, widget=LabelautyMultipleSelect())
 
 
-class ArticleChapterForm(forms.ModelForm):
+class ArticleContentForm(forms.ModelForm):
+
+    def is_valid(self):
+        instance = self.instance
+        if isinstance(instance.index, int) and instance.article and (instance.id is None):
+            query_set = getattr(instance.article, instance.__class__.__name__.lower() + '_set', None)
+            if query_set is None:
+                return
+            if query_set.filter(index=instance.index).count() > 0:
+                query_set.filter(index__gte=instance.index).update(index=models.F('index')+1)
+        return super(ArticleContentForm, self).is_valid()
+
+
+class ArticleChapterForm(ArticleContentForm):
     class Meta:
         model = ArticleChapter
         fields = '__all__'
         exclude = ["article_id"]
 
 
-class ArticlePageForm(forms.ModelForm):
+class ArticlePageForm(ArticleContentForm):
     class Meta:
         model = ArticlePage
         fields = '__all__'
@@ -62,9 +75,8 @@ class ArticlePageAddForm(forms.ModelForm):
         fields = ['content']
 
 
-class ArticleCatalogueForm(forms.ModelForm):
+class ArticleCatalogueForm(ArticleContentForm):
     class Meta:
         model = ArticleCatalogue
         fields = '__all__'
-        exclude = ["article_page_id"]
 

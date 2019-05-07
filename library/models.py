@@ -24,6 +24,29 @@ class FakeDeleteModal(models.Model):
         abstract = True
 
 
+class ArticleContentModel(models.Model):
+    def save(self, **kwargs):
+        if isinstance(self.index, int) and self.article and (self.id is None):
+            query_set = getattr(self.article, self.__class__.__name__.lower() + '_set', None)
+            if query_set is None:
+                return
+            if query_set.filter(index=self.index).count() > 0:
+                query_set.filter(index__gte=self.index).update(index=models.F('index')+1)
+        return super(ArticleContentModel, self).save(**kwargs)
+
+    def delete(self,  **kwargs):
+        if isinstance(self.index, int) and self.article:
+            query_set = getattr(self.article, self.__class__.__name__.lower() + '_set', None)
+            if query_set is None:
+                return
+            if query_set.filter(index=self.index+1).count() > 0:
+                query_set.filter(index__gt=self.index).update(index=models.F('index') - 1)
+        return super(ArticleContentModel, self).delete(**kwargs)
+
+    class Meta:
+        abstract = True
+
+
 class Author(FakeDeleteModal):
     name = models.CharField(max_length=100, verbose_name="姓名", null=True)
     description = models.CharField(max_length=1000, verbose_name="描述信息", null=True)
@@ -83,7 +106,7 @@ class Article(FakeDeleteModal):
         return self.title
 
 
-class ArticleChapter(models.Model):
+class ArticleChapter(ArticleContentModel):
     class Meta:
         ordering = ['index']
         verbose_name = "章节"
@@ -98,12 +121,13 @@ class ArticleChapter(models.Model):
         return '{0}:{1}'.format(self.index, self.title)
 
 
-class ArticlePage(models.Model):
+class ArticlePage(ArticleContentModel):
     class Meta:
         ordering = ['index']
         verbose_name = "书页"
         verbose_name_plural = "书页"
-    index = models.IntegerField(verbose_name="页码", null=True)
+
+    index = models.IntegerField(verbose_name="总页码", null=True)
     content = RichTextField(verbose_name="内容", null=True)
     article = models.ForeignKey(Article, verbose_name="书籍", on_delete=models.SET_NULL, null=True)
     chapter = models.ForeignKey(ArticleChapter, verbose_name="所属章节", on_delete=models.SET_NULL, null=True, blank=True)
@@ -112,7 +136,7 @@ class ArticlePage(models.Model):
         return self.index
 
 
-class ArticleCatalogue(models.Model):
+class ArticleCatalogue(ArticleContentModel):
     class Meta:
         ordering = ['index']
         verbose_name = "书籍目录"
@@ -122,7 +146,6 @@ class ArticleCatalogue(models.Model):
     index_description = models.CharField(max_length=100, verbose_name="页码描述", null=True, blank=True)
     title = models.CharField(max_length=100, verbose_name="标题", null=True)
     description = models.CharField(max_length=2000, verbose_name="简介", null=True, blank=True)
-    page = models.ForeignKey(ArticlePage, verbose_name="书页", on_delete=models.SET_NULL, null=True, blank=True)
     article = models.ForeignKey(Article, verbose_name="书籍", on_delete=models.SET_NULL, null=True)
 
     def __unicode__(self):

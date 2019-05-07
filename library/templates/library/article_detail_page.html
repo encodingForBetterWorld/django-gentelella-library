@@ -76,7 +76,8 @@
         <div class="x_content">
              <table-component id='catalogue' title='目录' :datas="catalogue.datas" :fields="catalogue.list_fields"
                               @modify="rowModify"
-                              @row-delete="rowDelete">
+                              @row-delete="rowDelete"
+                              @row-page-list="rowPageList">
             </table-component>
         </div>
         {% endverbatim %}
@@ -108,7 +109,8 @@
         <div class="x_content">
             <table-component id='chapter' title='章节' :datas="chapter.datas" :fields="chapter.list_fields"
                              @modify="rowModify"
-                             @row-delete="rowDelete">
+                             @row-delete="rowDelete"
+                             @row-page-list="rowPageList">
             </table-component>
         </div>
     </div>
@@ -195,6 +197,7 @@
      el: '#app',
      data: function(){
          return {
+             curr_chapter_id: 0,
              catalogue: {
                  datas: [],
                  form: {},
@@ -221,23 +224,9 @@
                          verbose_name: '简介',
                          field: 'description',
                          type: 'text'
-                     },
-                     {
-                         verbose_name: '书页',
-                         field: 'page',
-                         type: 'select'
                      }
                  ],
-                 list_fields: [
-                     {
-                         verbose_name: '页码',
-                         field: 'index_description'
-                     },
-                     {
-                         verbose_name: '标题',
-                         field: 'title'
-                     },
-                 ],
+                 list_fields: [],
                  range: {
                      page: []
                  }
@@ -265,16 +254,7 @@
                          type: 'text'
                      }
                  ],
-                 list_fields: [
-                     {
-                         verbose_name: '章节编号',
-                         field: 'index'
-                     },
-                     {
-                         verbose_name: '标题',
-                         field: 'title'
-                     }
-                 ]
+                 list_fields: []
              },
              page: {
                  prefix: '',
@@ -346,7 +326,7 @@
                              url: API_HOST + 'page/' + v.page.data.id + '/delete',
                              type: "POST"
                          }).then(function (res) {
-                             v.refreshTable('page', v.page.data.index - 1)
+                             v.refreshTable('page', {page: v.page.data.index - 1})
                          })
                      }
                  })
@@ -354,7 +334,8 @@
              if (type == 'add'){
                  v.page.prefix = '新增'
                  v.page.form = {
-                     content: ""
+                     content: "",
+                     chapter: v.curr_chapter_id || ''
                  }
              }else if (type == 'modify') {
                  v.page.prefix = '修改'
@@ -388,7 +369,7 @@
                  url: API_HOST + 'page/'+ (v.page.form.id ? v.page.form.id+'/modify':'add/'),
                  data: v.page.form
              }).then(function () {
-                 v.refreshTable('page', v.page.form.index)
+                 v.refreshTable('page', {page: v.page.form.index})
                  v.page.form = {
                      content: ""
                  }
@@ -401,14 +382,16 @@
                  content: ""
              }
          },
-         refreshTable: function (i, p){
+         refreshTable: function (i, param){
              var v = this;
+             param = param || {}
+             if (i == "page" && v.curr_chapter_id > 0){
+                 param['chapter_id'] = v.curr_chapter_id
+             }
              $.x_request({
                  type: "GET",
                  url: "{% url 'api' 'article' data.id %}" + (i+'s'),
-                 data: {
-                     page: p>0?p:1
-                 }
+                 data: param
              }).then(function (res) {
                  if (i== 'page'){
                      v.page.data = res.data.data
@@ -444,8 +427,18 @@
                  }
              })
          },
+         rowPageList: function (i, idx) {
+             var v=this, data = this.$data[i].datas[idx]
+             if (i=='catalogue'){
+                 v.refreshTable('page', {page: data.index})
+                 v.curr_chapter_id = 0
+             } else if (i=='chapter'){
+                 v.curr_chapter_id = data.id
+                 v.refreshTable('page')
+             }
+         },
          navigateToPage: function (idx) {
-             this.refreshTable('page', idx)
+             this.refreshTable('page', {page: idx})
          }
      }
  })

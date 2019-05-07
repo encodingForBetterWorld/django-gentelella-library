@@ -17,12 +17,16 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.static import serve
 import settings
+from library.views import page_not_found, permission_denied, page_internal_server_error
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'', include('library.urls')),
-    url(r'^media/(?P<path>.*)$', serve,
-        {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
-    url(r'^static/(?P<path>.*)$', serve,
-        {'document_root': settings.STATIC_ROOT})
+    # url(r'^media/(?P<path>.*)$', serve,
+    #     {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),
+    # url(r'^static/(?P<path>.*)$', serve,
+    #     {'document_root': settings.STATIC_ROOT})
 ]
+handler403 = permission_denied
+handler404 = page_not_found
+handler500 = page_internal_server_error

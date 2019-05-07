@@ -431,8 +431,8 @@
          rowPageList: function (i, idx) {
              var v=this, data = this.$data[i].datas[idx]
              if (i=='catalogue'){
-                 v.refreshTable('page', {page: data.index})
                  v.curr_chapter_id = 0
+                 v.refreshTable('page', {page: data.index})
              } else if (i=='chapter'){
                  v.curr_chapter_id = data.id
                  v.refreshTable('page')

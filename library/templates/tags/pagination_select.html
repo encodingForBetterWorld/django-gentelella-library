@@ -29,7 +29,7 @@
                     </a>
                 </li>
                 <li>
-                    <select class="form-control" onchange="javascript:window.location.href='?{{ query_string }}&page='+this.value">
+                    <select class="paginate_button" onchange="javascript:window.location.href='?{{ query_string }}&page='+this.value">
                         {% for idx in page_indexes %}
                         <option value={{ idx }}
                         {% if page_index == current_index %}

@@ -20,7 +20,7 @@
                         </a>
                     </li>
                     <li>
-                        <select class="form-control" @change="navigateTo" v-if="indexes && indexes.length>0">
+                        <select class="paginate_button" @change="navigateTo" v-if="indexes && indexes.length>0">
                             <option :value="idx" v-for="idx in indexes" :selected="page.number===idx">
                                 第{{ idx }}页
                             </option>
